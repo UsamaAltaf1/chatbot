@@ -1,6 +1,10 @@
 import os
 import gradio as gr
+from flask import Flask, request
 from groq import Groq
+
+# Initialize Flask app
+app = Flask(__name__)
 
 # Secure API key access
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
@@ -33,4 +37,10 @@ with gr.Blocks(theme="soft") as demo:
 
     chat_interface = gr.ChatInterface(chat_with_bot, chatbot=gr.Chatbot(height=400))
 
-demo.launch()
+# Define a route for Flask to serve Gradio
+@app.route("/")
+def index():
+    return demo.launch(share=True)
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=8080)
